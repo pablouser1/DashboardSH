@@ -64,7 +64,7 @@ nginx_enable_site() {
         return
     fi
 
-    sudo ln -s "$NGINX_AVAILABLE/$site" "$NGINX_ENABLED/$site" 
+    sudo ln -s "$NGINX_AVAILABLE/$site" "$NGINX_ENABLED/$site"
 
     nginx_apply_changes
 }
