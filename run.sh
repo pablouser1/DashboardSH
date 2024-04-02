@@ -15,16 +15,14 @@ main() {
     	"1" "NGINX" \
         "2" "Stats" \
         "3" "PersonalHub" \
-        "4" "SchedOrganizer" \
-        "5" "Notes" 3>&2 2>&1 1>&3
+        "4" "Notes" 3>&2 2>&1 1>&3
     )
 
     case $choise in
         1) nginx_menu ;;
         2) stats_menu ;;
         3) personalhub_menu ;;
-        4) schedoroganizer_menu ;;
-        5) notes_menu ;;
+        4) notes_menu ;;
     esac
 
 }
