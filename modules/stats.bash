@@ -1,5 +1,5 @@
 STATS_GOACCESS="/usr/bin/goaccess"
-STATS_ROOTHTML="/var/www/html/stats"
+STATS_ROOTHTML="/var/www/stats"
 STATS_GEOLITE2="./files/GeoLite2-City.mmdb"
 
 stats_generate() {

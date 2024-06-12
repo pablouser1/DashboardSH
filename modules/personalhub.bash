@@ -1,4 +1,5 @@
-PERSONAL_HUB_ROOT=/var/www/html/root
+PERSONAL_HUB_ROOT="$HOME/www/PersonalHub"
+PERSONAL_HUB_PUBLIC=/var/www/root
 YARN_BIN=/usr/bin/yarn
 
 personalhub_upgrade() {
@@ -6,10 +7,14 @@ personalhub_upgrade() {
 
     cd $PERSONAL_HUB_ROOT
 
-    sudo -u www-data git pull
-    sudo -u www-data $YARN_BIN
-    sudo -u www-data $YARN_BIN build
+    git pull
+    $YARN_BIN
+    $YARN_BIN build
     cd $current
+
+    sudo rm -rf "$PERSONAL_HUB_PUBLIC/*"
+    sudo cp -r "$PERSONAL_HUB_ROOT/dist/*" "$PERSONAL_HUB_PUBLIC"
+    sudo chown -R www-data:www-data "$PERSONAL_HUB_PUBLIC"
 }
 
 personalhub_menu() {
