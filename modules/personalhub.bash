@@ -12,9 +12,9 @@ personalhub_upgrade() {
     $YARN_BIN build
     cd $current
 
-    sudo rm -rf "$PERSONAL_HUB_PUBLIC/*"
-    sudo cp -r "$PERSONAL_HUB_ROOT/dist/*" "$PERSONAL_HUB_PUBLIC"
-    sudo chown -R www-data:www-data "$PERSONAL_HUB_PUBLIC"
+    sudo rm -rf $PERSONAL_HUB_PUBLIC/*
+    sudo cp -r $PERSONAL_HUB_ROOT/dist/* $PERSONAL_HUB_PUBLIC
+    sudo chown -R www-data:www-data $PERSONAL_HUB_PUBLIC
 }
 
 personalhub_menu() {
