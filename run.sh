@@ -1,13 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 if [[ $EUID -eq 0 ]]; then
    echo "Don't run this script as root!"
    exit 1
 fi
 
-source ./helpers.bash
-helpers_source_dir './modules'
+source "$SCRIPT_DIR/helpers.bash"
+helpers_source_dir "$SCRIPT_DIR/modules"
 
 main() {
     local choise=$(
