@@ -10,6 +10,8 @@ stats_generate() {
         whiptail --title "Stats Generator" --menu "Pick a site" 0 0 0 $options 3>&2 2>&1 1>&3
     )
     local site=$(echo "$enabled_sites" | sed -n "${siteChoise}p")
+    local site_path="$NGINX_AVAILABLE/$site"
+    local log_path=$(awk '/access_log/ {gsub(/;/,"",$2); print $2}' "$site_path")
 
     # Arguments for GoAccess
     local choises=$(
@@ -29,7 +31,7 @@ stats_generate() {
         esac
     done
 
-    sudo $STATS_GOACCESS "$NGINX_LOGS/${site}_access.log" $arguments
+    sudo $STATS_GOACCESS "$log_path" $arguments
 }
 
 stats_menu() {
