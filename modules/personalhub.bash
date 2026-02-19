@@ -8,7 +8,7 @@ personalhub_upgrade() {
     cd $PERSONAL_HUB_ROOT
 
     git pull
-    $NPM_BIN
+    $NPM_BIN i
     $NPM_BIN run build
     cd $current
 
