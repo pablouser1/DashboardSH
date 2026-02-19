@@ -1,6 +1,6 @@
 PERSONAL_HUB_ROOT="$HOME/www/PersonalHub"
 PERSONAL_HUB_PUBLIC=/var/www/root
-YARN_BIN=/usr/bin/yarn
+NPM_BIN=/usr/bin/npm
 
 personalhub_upgrade() {
     current=$(pwd)
@@ -8,8 +8,8 @@ personalhub_upgrade() {
     cd $PERSONAL_HUB_ROOT
 
     git pull
-    $YARN_BIN
-    $YARN_BIN build
+    $NPM_BIN
+    $NPM_BIN run build
     cd $current
 
     sudo rm -rf $PERSONAL_HUB_PUBLIC/*
