@@ -5,7 +5,7 @@ NGINX_LOGS="/var/log/nginx"
 # Checks if a site is enable
 #
 # Arguments:
-#   * Site name as string
+#   * Site name
 #
 # Returns:
 #   * If that site is enabled
@@ -14,10 +14,27 @@ nginx_site_is_enabled() {
     test -f "$NGINX_ENABLED/$site"
 }
 
+# Checks if a site is enable and returns as verb
+#
+# Arguments:
+#   * Site name
+#
+# Returns:
+#   * 'ON' if enabled, 'OFF' if not
+nginx_site_is_enabled_verb() {
+    local site=$1
+
+    if nginx_site_is_enabled "$site"; then
+        echo "ON"
+    else
+        echo "OFF"
+    fi
+}
+
 # Builds options from nginx sites for whiptail
 #
 # Arguments:
-#   * List of sites as string
+#   * List of sites
 #
 # Outputs:
 #   * Whiptail options
@@ -26,22 +43,22 @@ nginx_get_whiptail_options() {
     local options=""
 
     local i=1
-    for enabled_site in $enabled_sites; do
-        options="$options $i $enabled_site"
+    for site in $sites; do
+        options="$options $i $site"
         i=$((i + 1))
     done
 
     echo $options
 }
 
-# Get all sites enabled
+# Get all sites available
 #
 # Globals:
 #   * NGINX_AVAILABLE
 #
 # Outputs:
 #   * Available sites separated by \n
-nginx_get_enabled_sites() {
+nginx_get_available_sites() {
     ls -1 "$NGINX_AVAILABLE"
 }
 
@@ -52,65 +69,54 @@ nginx_apply_changes() {
     fi
 }
 
-# Enables a site
+# Toggle state of site
 #
 # Arguments:
-#   * Name of site
-nginx_enable_site() {
+#   * Site name
+#
+# Globals:
+#   * NGINX_AVAILABLE
+#   * NGINX_ENABLED
+nginx_toggle_site() {
     local site=$1
 
     if nginx_site_is_enabled $site; then
-        whiptail --title "NGINX Sites" --msgbox "This site is already enabled" 0 0
-        return
+        # Remove enabled
+        sudo rm "$NGINX_ENABLED/$site"
+    else
+        # Do ln to enable
+        sudo ln -s "$NGINX_AVAILABLE/$site" "$NGINX_ENABLED/$site"
     fi
-
-    sudo ln -s "$NGINX_AVAILABLE/$site" "$NGINX_ENABLED/$site"
 
     nginx_apply_changes
 }
 
-# Disables a site
-#
-# Arguments:
-#   * Name of site
-nginx_disable_site() {
-    local site=$1
-
-    if ! nginx_site_is_enabled $site; then
-        whiptail --title "NGINX Sites" --msgbox "This site is already disabled" 0 0
-        return
-    fi
-
-    sudo rm "$NGINX_ENABLED/$site"
-
-    nginx_apply_changes
-}
-
+# List all sites and run actions
 nginx_sites() {
-    local enabled_sites=$(nginx_get_enabled_sites)
-    local options=$(nginx_get_whiptail_options "$enabled_sites")
-
+    # List all sites
+    local available_sites=$(nginx_get_available_sites)
+    local options=$(nginx_get_whiptail_options "$available_sites")
     local siteChoise=$(
-        whiptail --title "NGINX Sites" --menu "Pick a site" 0 0 0 $options 3>&2 2>&1 1>&3
+        whiptail --title "NGINX Sites" --menu "Toggle a site" 0 0 0 $options 3>&2 2>&1 1>&3
     )
 
-    local site=$(echo "$enabled_sites" | sed -n "${siteChoise}p")
-
+    # Pick action for site
+    local site=$(echo "$available_sites" | sed -n "${siteChoise}p")
+    local status=$(nginx_site_is_enabled_verb "$site")
     local actionChoise=$(
-        whiptail --title "$site" --menu "Pick an action" 0 0 0 \
-            "1" "Enable" \
-            "2" "Disable" 3>&2 2>&1 1>&3
+        whiptail --title "$site" --menu "Current status is $status" 0 0 0 \
+            "1" "Toggle" \
+            "2" "Stats" 3>&2 2>&1 1>&3
     )
 
     case $actionChoise in
         1)
-            # Enable site
-            nginx_enable_site $site
+            # Toggle site
+            nginx_toggle_site "$site"
             ;;
         2)
-            # Disable site
-            nginx_disable_site $site
-            ;;
+            # Generate stats
+            stats_generate "$site"
     esac
 }
 
