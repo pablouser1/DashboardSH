@@ -91,6 +91,19 @@ nginx_toggle_site() {
     nginx_apply_changes
 }
 
+nginx_stats() {
+    local site=$1
+
+    stats_generate "$site"
+    if ! nginx_site_is_enabled "$STATS_SITE"; then
+        nginx_toggle_site "$STATS_SITE"
+    fi
+
+    whiptail --title "$site" --msgbox "Stats site enabled and generated for $site. Press ok to disable stats site." 0 0
+
+    nginx_toggle_site "$STATS_SITE"
+}
+
 # List all sites and run actions
 nginx_sites() {
     # List all sites
@@ -116,7 +129,7 @@ nginx_sites() {
             ;;
         2)
             # Generate stats
-            stats_generate "$site"
+            nginx_stats "$site"
     esac
 }
 

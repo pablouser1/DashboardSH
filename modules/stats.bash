@@ -1,6 +1,7 @@
 STATS_GOACCESS="/usr/bin/goaccess"
 STATS_ROOTHTML="/var/www/stats"
 STATS_GEOLITE2="$SCRIPT_DIR/files/GeoLite2-City.mmdb"
+STATS_SITE="stats.pabloferreiro.es"
 
 stats_generate() {
     local site=$1
